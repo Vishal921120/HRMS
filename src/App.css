@@ -45,7 +45,7 @@
 /* SideBar css */
 .sidebar {
   height: 90vh;
-  width: 15%;
+  width: 200px;
   background: #0d6efd;
   color: white;
   transition: width 1s ease-in-out;
@@ -54,4 +54,26 @@
 .sidebar-hidden {
   width: 0;
   display: none;
+}
+
+
+/* table css */
+
+.css-pdct74-MuiTablePagination-selectLabel{
+  color:blue;
+  margin-top: 10px;
+}
+
+.css-levciy-MuiTablePagination-displayedRows{
+  color: blue;
+  margin-top: 12px;
+}
+
+.css-gl260s-MuiDataGrid-columnHeadersInner{
+  font-weight: bolder;
+}
+
+.MuiDataGrid-columnHeader--sortable {
+  font-size: large;
+  color: blue;
 }

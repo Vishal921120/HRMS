@@ -4,46 +4,32 @@ import { faBars } from "@fortawesome/free-solid-svg-icons";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Pagination from "react-bootstrap/Pagination";
-import { notify } from "../utility";
 import Dropdown from 'react-bootstrap/Dropdown';
-import { PopUp } from "./PopUp";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { deleteCandidate, fetchCandidate } from "../Services/Api";
+import { notify } from "../Services/utility";
 
 export const Candidate = () => {
   const [candidate, setCandidate] = useState([]);
-  const [popUp, setPop] = useState(false);
   const [activePage, setActivePage] = useState(1); 
-  const itemsPerPage = 100;
+  const itemsPerPage = 10;
 
-  const fetchCandidate = async () => {
-    try {
-      const response = await axios.get(
-        "https://empployeemanagementapi.azurewebsites.net/api/Candidate/GetAll"
-      );
+  const navigate = useNavigate();
 
-      console.log(response);
-
-      const data = response.data.data;
-      setCandidate(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const getCandidateData = async() => {
+    const data = await fetchCandidate();
+    data.filter(item => item.id !== 0);
+    setCandidate(data);
+  }
 
   useEffect(() => {
-    fetchCandidate();
+    getCandidateData();
   }, []);
 
-  const handleDelete = (id) => {};
-
-  const handleSubmit = (candidate) => {};
-
-  const handleAdd = () => {
-    setPop(true);
-  };
-
-  const handleClose = () => {
-    setPop(false);
+  const handleDelete = async(id) => {
+     deleteCandidate(id);
+     setCandidate((prev) => prev.filter((item) => item.id !== id));
+     notify("Candidate Deleted", {type : "success"});
   };
 
   const indexOfLastItem = activePage * itemsPerPage;
@@ -74,7 +60,7 @@ export const Candidate = () => {
             <th>Remarks</th>
             <th>Status</th>
             <th className="d-flex justify-content-center">
-              <Button>
+              <Button onClick={() => navigate('/home/candidate/add')}>
                 {" "}
                 <b>+</b> Add
               </Button>
@@ -85,11 +71,11 @@ export const Candidate = () => {
           {currentItems && currentItems.length !== 0 ? (
             currentItems.map((candidate) => (
               <tr key={candidate.id}>
-                <td>{candidate.firstName}</td>
-                <td>{candidate.lastName}</td>
-                <td>{candidate.personalEmailId}</td>
-                <td>{candidate.approvalRemarks}</td>
-                <td>
+                <td style={{color:'#70757a'}}>{candidate.firstName}</td>
+                <td style={{color:'#70757a'}}>{candidate.lastName}</td>
+                <td style={{color:'#70757a'}}>{candidate.personalEmailId}</td>
+                <td style={{color:'#70757a'}}>{candidate.approvalRemarks}</td>
+                <td style={{color:'#70757a'}}>
                   {candidate.approvalStatus === 2 ? "Approved" : "Pending"}
                 </td>
                 <td className="d-flex justify-content-center">
@@ -99,7 +85,7 @@ export const Candidate = () => {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                      <Dropdown.Item href="#/action-1" style={{color:"red"}}><b>Delete</b></Dropdown.Item>
+                      <Dropdown.Item href="#/delete" style={{color:"red"}} onClick={() => handleDelete(candidate.id)}><b>Delete</b></Dropdown.Item>
                       <Dropdown.Item href="#/action-2" style={{color:"green"}}>
                       <b>Approve</b>
                       </Dropdown.Item>
@@ -125,7 +111,6 @@ export const Candidate = () => {
         </tbody>
       </Table>
 
-      <PopUp show={popUp} close={handleClose} onSubmit={handleSubmit} />
       <Pagination>
         {Array.from(
           { length: Math.ceil(candidate.length / itemsPerPage) },

@@ -1,14 +1,12 @@
 import React, { useEffect } from "react";
-import Container from "react-bootstrap/Container";
-import Navbar from "react-bootstrap/Navbar";
-import Button from "react-bootstrap/Button";
 import { useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { FaUserCircle } from "react-icons/fa";
 import Accordion from "react-bootstrap/Accordion";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
+import Navbar from "./Navbar";
+import { SideBar } from "./SideBar";
 
 export const Layout = () => {
   const [isSidebarHidden, setIsSidebarHidden] = useState(true);
@@ -42,48 +40,19 @@ export const Layout = () => {
 
   return (
     <>
-      <Navbar bg="primary" data-bs-theme="dark">
-        <Container>
-          <Button variant="primary" onClick={toggleSidebar}>
-            <GiHamburgerMenu />
-          </Button>
-          <Navbar.Brand href="#home">AWC</Navbar.Brand>
-          <Navbar.Toggle />
-          <Navbar.Collapse className="justify-content-end">
-            <Button onClick={handleLogout}>
-              <FaUserCircle /> Logout
-            </Button>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-      
+      <Navbar onToggleSidebar={toggleSidebar} onLogout={handleLogout}/>
+
       <div className="d-flex flex-row">
-      <div
-        className={`sidebar ${
-          isSidebarHidden ? "" : "sidebar-hidden"
-        } p-1 mt-1`}
-      >
-        <Accordion>
-          {menuData.length !== 0
-            ? menuData.map((item, index) => (
-                <Accordion.Item eventKey={index}>
-                  <Accordion.Header>
-                    <b>{item.pageURL}</b>
-                  </Accordion.Header>
-                  <Accordion.Body
-                    className="d-flex justify-content-center align-items-center"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate(`/home/${item.pageURL}`)}
-                  >
-                    <GiHamburgerMenu className="m-1" />
-                    {item.menu}
-                  </Accordion.Body>
-                </Accordion.Item>
-              ))
-            : ""}
-        </Accordion>
-      </div>
-      <Outlet />
+        <div
+          className={`sidebar ${
+            isSidebarHidden ? "" : "sidebar-hidden"
+          } p-1 mt-1`}
+        >
+          <SideBar menuData = {menuData}/>
+        </div>
+        <div className="m-3" style={{ width: "100vw" , height:"80vh" }}>
+          <Outlet />
+        </div>
       </div>
     </>
   );

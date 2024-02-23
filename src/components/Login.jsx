@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import axios from "axios";
-import { notify } from "../utility";
+import { notify } from "../Services/utility";
 import { FaUser } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
+import { userLogin } from "../Services/Api";
 
 export const Login = () => {
   const [userName, setUserName] = useState("");
@@ -23,10 +23,7 @@ export const Login = () => {
     };
 
     try {
-      const response = await axios.post(
-        "https://empployeemanagementapi.azurewebsites.net/api/Authenticate/login",
-        userInfo
-      );
+      const response = await userLogin(userInfo);
       console.log(response);
 
       if (response.status === 200) {
@@ -48,7 +45,6 @@ export const Login = () => {
       style={{
         width: "100vw",
         height: "100vh",
-        background: "rgb(2,0,36)",
         background:
           "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(114,9,121,1) 35%, rgba(0,212,255,1) 100%)",
       }}
